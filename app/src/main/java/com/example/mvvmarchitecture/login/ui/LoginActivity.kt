@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
         setObservers()
         getPost()
         setListeners()
+
     }
 
     private fun setListeners() {
