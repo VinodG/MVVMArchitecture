@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".login.ui.LoginActivity"
+            android:name=".login.ui.PostsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

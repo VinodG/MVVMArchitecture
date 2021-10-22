@@ -17,7 +17,6 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
 
     private var arrPost: List<Post> = mutableListOf()
     var arrTemp: List<Post> = mutableListOf()
-    private val TAG = "LoginVM"
     val lvPost: MutableLiveData<Results<List<Post>>> = MutableLiveData()
 
     fun getPost() {
@@ -31,7 +30,6 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
                 lvPost.postValue(Results.Error(e))
             }
             hideLoader()
-            Log.e(TAG, "getPost:  ")
         }
     }
 
