@@ -7,4 +7,5 @@ sealed class Results<T> {
     ) : Results<T>()
 
     data class Data<T>(val data: T) : Results<T>()
+    data class Loading<T>(val isLoading: Boolean) : Results<T>()
 }

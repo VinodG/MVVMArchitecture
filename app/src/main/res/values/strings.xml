@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MVVMArchitecture</string>
+    <string name="title_activity_api_list">ApiListActivity</string>
 </resources>
