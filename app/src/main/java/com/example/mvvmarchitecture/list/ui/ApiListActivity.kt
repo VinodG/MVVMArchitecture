@@ -1,5 +1,6 @@
 package com.example.mvvmarchitecture.list.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.list.data.ApiListVM
+import com.example.mvvmarchitecture.login.ui.LoginActivity
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,14 +35,14 @@ class ApiListActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             viewModel.getPost()
+            viewModel.getCounter()
             MVVMArchitectureTheme {
                 println("recomposition")
                 val uiState by viewModel.apiResult.observeAsState()
                 val tabNames by viewModel.tabNames.observeAsState()
-                Column() {
+                Column {
                     TopSection(tabNames) {
                         viewModel.filter(it)
-
                     }
                     uiState?.let {
                         ApiListScreen(uiState = it)
@@ -50,8 +52,15 @@ class ApiListActivity : ComponentActivity() {
         }
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.increment()
+    }
+
+
     @Composable
-    private fun TopSection(tabNames: List<String>?, function: (String) -> Unit) {
+    fun TopSection(tabNames: List<String>?, function: (String) -> Unit) {
         tabNames?.let {
             Spacer(modifier = Modifier.height(24.dp))
             LazyRow {
@@ -71,7 +80,7 @@ class ApiListActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ApiListScreen(uiState: Results<List<Post>>) {
+    fun ApiListScreen(uiState: Results<List<Post>>) {
         when (uiState) {
             is Results.Loading -> {
                 Loading()
@@ -86,7 +95,7 @@ class ApiListActivity : ComponentActivity() {
 
     }
 
-    private @Composable
+    @Composable
     fun Loading() {
         Text(
             text = "Loading...",
@@ -97,17 +106,25 @@ class ApiListActivity : ComponentActivity() {
         )
     }
 
-    private @Composable
+    @Composable
     fun ListScreen(list: List<Post>) {
         LazyColumn {
             itemsIndexed(list) { pos, data ->
-                Text(text = "Title : ${data.title} \nBody : ${data.body}")
+                Text(text = "Title : ${data.title} \nBody : ${data.body}",
+                    modifier = Modifier.clickable {
+                        startActivity(
+                            Intent(
+                                this@ApiListActivity,
+                                LoginActivity::class.java
+                            )
+                        )
+                    })
                 Divider(Modifier.height(2.dp))
             }
         }
     }
 
-    private @Composable
+    @Composable
     fun ErrorScreen(error: Results.Error<List<Post>>) {
         Column(
             modifier = Modifier

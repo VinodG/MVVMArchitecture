@@ -1,10 +1,13 @@
 package com.example.mvvmarchitecture.di
 
+import android.content.Context
+import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -30,7 +33,6 @@ class AppModule {
 
     @Provides
     fun serialization() = GsonConverterFactory.create()
-
 
     @Provides
     fun retrofitBuilder(client: OkHttpClient, factory: GsonConverterFactory): Api =
