@@ -35,9 +35,9 @@ class ApiListVMTest : TestCase() {
     @Test
     fun testData() = runBlockingTest {
         viewModel.getPost()
-        var end = viewModel.apiResult.getOrAwaitValue()
-        println("end : $end")
-        assertEquals(end is Results.Loading, true)
+        val response = viewModel.apiResult.getOrAwaitValue()
+        println("end : $response")
+        assertEquals(response is Results.Loading, true)
 //        viewModel.apiResult.observeForTesting {
 //            var res = viewModel.apiResult.value
 //            println("received :  " + viewModel.apiResult.value)
@@ -48,21 +48,21 @@ class ApiListVMTest : TestCase() {
     @Test
     fun receivedTestDataAfterLoading() = runBlockingTest {
         viewModel.getPost()
-        var end = viewModel.apiResult.getOrAwaitValue()
-        println("end : $end")
-        assertEquals(end is Results.Loading, true)
+        var response = viewModel.apiResult.getOrAwaitValue()
+        println("end : $response")
+        assertEquals(response is Results.Loading, true)
         delay(10000)
-        end = viewModel.apiResult.getOrAwaitValue()
-        println("end : $end")
-        assertEquals(end is Results.Data<*>, true)
+        response = viewModel.apiResult.getOrAwaitValue()
+        println("end : $response")
+        assertEquals(response is Results.Data<*>, true)
     }
 
     @Test
     fun testTabNames() = runBlockingTest {
         viewModel.getPost()
-        var end = viewModel.tabNames.getOrAwaitValue()
-        println("end : $end")
-        assertEquals(end.size > 1, true)
+        var response = viewModel.tabNames.getOrAwaitValue()
+        println("end : $response")
+        assertEquals(response.size > 1, true)
     }
 
 
