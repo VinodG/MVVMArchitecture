@@ -55,11 +55,6 @@ class ApiListVMTest : TestCase() {
         end = viewModel.apiResult.getOrAwaitValue()
         println("end : $end")
         assertEquals(end is Results.Data<*>, true)
-//        viewModel.apiResult.observeForTesting {
-//            var res = viewModel.apiResult.value
-//            println("received :  " + viewModel.apiResult.value)
-//            assertEquals(res is Results.Data<*>, true)
-//        }
     }
 
     @Test
