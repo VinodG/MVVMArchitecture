@@ -36,12 +36,19 @@ class ApiListVM @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _apiResult.postValue(Results.Loading(true))
-                repo.get().apply {
-                    delay(3000)
-                    _posts = this.toMutableList()
-                    _apiResult.postValue(Results.Data(_posts))
-                    getTabNames(_posts)
+                repo.getProfile().apply {
+                    if(isSuccessful){
+
+                    }
+                    println("got response")
+
                 }
+//                repo.get().apply {
+//                    delay(3000)
+//                    _posts = this.toMutableList()
+//                    _apiResult.postValue(Results.Data(_posts))
+//                    getTabNames(_posts)
+//                }
             } catch (e: Exception) {
                 _apiResult.postValue(Results.Error(e))
             }

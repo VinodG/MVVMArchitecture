@@ -1,13 +1,11 @@
 package com.example.mvvmarchitecture.di
 
-import android.content.Context
-import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.remote.Api
+import com.example.mvvmarchitecture.data.remote.CustomInterceptor
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,7 +25,7 @@ class AppModule {
         return OkHttpClient.Builder().apply {
             connectTimeout(180, TimeUnit.SECONDS)
             readTimeout(180, TimeUnit.SECONDS)
-        }.addInterceptor(logger)
+        }.addInterceptor(logger).addInterceptor(CustomInterceptor("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkc2Fua2FyQHV5bml0ZS5jb20iLCJleHAiOjYxNjMzNjEyODAwLCJpYXQiOjE2NDEyNzg0MTB9.9s6UIiWEQDFAME6gmnTyR6BVdgMvOJFX349H54JTk-OuRfAylOUgVj4Q5qyGEQDmPI_9zzxutzb6tAsGnH_BLQ"))
             .build()
     }
 

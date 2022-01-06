@@ -1,5 +1,6 @@
 package com.example.mvvmarchitecture.list.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -19,17 +20,27 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.models.Post
+import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.Results
+import com.example.mvvmarchitecture.di.AppModule
 import com.example.mvvmarchitecture.list.data.ApiListVM
 import com.example.mvvmarchitecture.login.ui.LoginActivity
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
+import dagger.hilt.EntryPoints
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.components.SingletonComponent
+
+import dagger.hilt.InstallIn
+
+import dagger.hilt.EntryPoint
+
 
 @AndroidEntryPoint
 class ApiListActivity : ComponentActivity() {
 
-    val viewModel: ApiListVM by viewModels()
+    private val viewModel: ApiListVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +48,7 @@ class ApiListActivity : ComponentActivity() {
             viewModel.getPost()
             viewModel.getCounter()
             MVVMArchitectureTheme {
-                println("recomposition")
+                println("recomposition " + TempInjection(applicationContext).getApi())
                 val uiState by viewModel.apiResult.observeAsState()
                 val tabNames by viewModel.tabNames.observeAsState()
                 Column {
@@ -52,6 +63,22 @@ class ApiListActivity : ComponentActivity() {
         }
     }
 
+    class TempInjection(var applicationContext: Context) {
+        fun getPreference(): Preference {
+            return EntryPoints.get(applicationContext, MyClassInterface::class.java).foo
+        }
+
+        fun getApi(): Api {
+            return EntryPoints.get(applicationContext, MyClassInterface::class.java).api
+        }
+    }
+
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface MyClassInterface {
+        val foo: Preference
+        val api: Api
+    }
 
     override fun onResume() {
         super.onResume()
@@ -78,6 +105,9 @@ class ApiListActivity : ComponentActivity() {
             }
         }
     }
+//    class Temp(){
+//        fun getPreference() : Preference
+//    }
 
     @Composable
     fun ApiListScreen(uiState: Results<List<Post>>) {
@@ -109,7 +139,7 @@ class ApiListActivity : ComponentActivity() {
     @Composable
     fun ListScreen(list: List<Post>) {
         LazyColumn {
-            itemsIndexed(list) { pos, data ->
+            itemsIndexed(list) { _, data ->
                 Text(text = "Title : ${data.title} \nBody : ${data.body}",
                     modifier = Modifier.clickable {
                         startActivity(
