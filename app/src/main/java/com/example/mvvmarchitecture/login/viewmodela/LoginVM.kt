@@ -24,7 +24,7 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
         viewModelScope.launch(Dispatchers.IO) {
             showLoader()
             try {
-                arrPost = repo.get()
+                arrPost = repo.getApi()
                 arrTemp = arrPost
                 lvPost.postValue(Results.Data(arrPost))
             } catch (e: Exception) {

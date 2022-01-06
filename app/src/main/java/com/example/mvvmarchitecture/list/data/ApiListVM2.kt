@@ -12,12 +12,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 @HiltViewModel
-class ApiListVM @Inject constructor(
+class ApiListVM2 @Inject constructor(
     private var repo: Repo,
-    private var preference: Preference
 ) : ViewModel() {
 
 
@@ -34,11 +34,11 @@ class ApiListVM @Inject constructor(
 
 
     fun getPost() {
-        viewModelScope.launch/*(Dispatchers.IO) */{
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 _apiResult.postValue(Results.Loading(true))
                 repo.getApi().apply {
-                    delay(3000)
+//                    throw RuntimeException("network error")
                     _posts = this.toMutableList()
                     _apiResult.postValue(Results.Data(_posts))
                     getTabNames(_posts)
@@ -67,24 +67,6 @@ class ApiListVM @Inject constructor(
     }
 
     var lastValue = 0
-    fun increment() {
-        viewModelScope.launch {
-            var inc = lastValue + 1
-            println("token-resume-incremented ${inc}")
-            preference.setToken(inc)
-        }
-    }
-
-    fun getCounter() {
-        viewModelScope.launch {
-            preference.getToken {
-                it.let {
-                    lastValue = it
-                    println("token -collect $it")
-                }
-            }
-        }
-    }
 
 
 }

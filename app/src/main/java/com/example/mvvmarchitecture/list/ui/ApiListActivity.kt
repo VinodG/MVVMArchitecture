@@ -19,7 +19,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.mvvmarchitecture.data.CommonRepo
+import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
+import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.list.data.ApiListVM
 import com.example.mvvmarchitecture.login.ui.LoginActivity
@@ -34,6 +37,12 @@ class ApiListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            class FakeRepo : Repo{
+                override suspend fun getApi(): List<Post> {
+                    TODO("Not yet implemented")
+                }
+
+            }
             viewModel.getPost()
             viewModel.getCounter()
             MVVMArchitectureTheme {
