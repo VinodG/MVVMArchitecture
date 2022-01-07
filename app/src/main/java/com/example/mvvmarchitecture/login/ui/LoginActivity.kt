@@ -8,12 +8,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.mvvmarchitecture.R
 import com.example.mvvmarchitecture.base.AppViewModel
 import com.example.mvvmarchitecture.base.Preference
-import com.example.mvvmarchitecture.base.SharedData
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.databinding.ActivityLoginBinding

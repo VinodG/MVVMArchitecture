@@ -19,15 +19,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.example.mvvmarchitecture.base.AppViewModel
-import com.example.mvvmarchitecture.base.SharedData
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.list.data.ApiListVM
 import com.example.mvvmarchitecture.login.ui.LoginActivity
-import com.example.mvvmarchitecture.login.ui.MyViewModelFactory
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
