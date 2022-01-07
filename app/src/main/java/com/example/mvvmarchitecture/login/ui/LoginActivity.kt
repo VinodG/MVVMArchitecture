@@ -1,13 +1,19 @@
 package com.example.mvvmarchitecture.login.ui
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.mvvmarchitecture.R
+import com.example.mvvmarchitecture.base.AppViewModel
 import com.example.mvvmarchitecture.base.Preference
+import com.example.mvvmarchitecture.base.SharedData
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.databinding.ActivityLoginBinding
@@ -30,8 +36,14 @@ class LoginActivity : AppCompatActivity() {
     @Inject
     lateinit var preference: Preference
 
+    @Inject
+    lateinit var appViewModel: AppViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("result: ${appViewModel.x}")
+        appViewModel.x = 3
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setObservers()
         getPost()
@@ -89,5 +101,12 @@ class LoginActivity : AppCompatActivity() {
         vm.getPost()
     }
 
+
+}
+
+class MyViewModelFactory(var app: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return AppViewModel(app) as T
+    }
 
 }
