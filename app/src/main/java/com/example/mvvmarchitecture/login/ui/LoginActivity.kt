@@ -1,13 +1,10 @@
 package com.example.mvvmarchitecture.login.ui
 
-import android.app.Application
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mvvmarchitecture.R
 import com.example.mvvmarchitecture.base.AppViewModel
@@ -99,12 +96,5 @@ class LoginActivity : AppCompatActivity() {
         vm.getPost()
     }
 
-
-}
-
-class MyViewModelFactory(var app: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AppViewModel(app) as T
-    }
 
 }
