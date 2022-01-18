@@ -9,7 +9,7 @@ import kotlinx.coroutines.delay
 class FakeRepo : Repo {
     override suspend fun getApi(): List<Post> {
         var list = mutableListOf<Post>()
-        delay(1)
+//        delay(1)
         repeat(10) {
             list.add(Post("user-$it", "$it", "title", "body"))
         }

@@ -2,6 +2,7 @@ package com.example.mvvmarchitecture.list.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -49,6 +50,7 @@ class ApiListActivity : ComponentActivity() {
                 println("recomposition")
                 val uiState by viewModel.apiResult.observeAsState()
                 val tabNames by viewModel.tabNames.observeAsState()
+//                val data by viewModel.filteredData.observeAsState()
                 Column {
                     TopSection(tabNames) {
                         viewModel.filter(it)
@@ -56,6 +58,12 @@ class ApiListActivity : ComponentActivity() {
                     uiState?.let {
                         ApiListScreen(uiState = it)
                     }
+                   /* data?.let {
+                        (it as Results.Data<List<Post>>)
+                        if (!it.data.isEmpty())
+                            ApiListScreen(uiState = it)
+
+                    }*/
                 }
             }
         }
@@ -92,7 +100,8 @@ class ApiListActivity : ComponentActivity() {
     fun ApiListScreen(uiState: Results<List<Post>>) {
         when (uiState) {
             is Results.Loading -> {
-                Loading()
+                if (uiState.isLoading)
+                    Loading()
             }
             is Results.Data -> {
                 ListScreen(uiState.data)
