@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_orders"
+    app:startDestination="@id/ordersFragments">
+
+
+    <fragment
+        android:id="@+id/ordersFragments"
+        android:name="com.example.orders.OrdersFragments"
+        android:label="OrdersFragments"
+        tools:layout="@layout/fragment_orders_fragments">
+        <action
+            android:id="@+id/action_ordersFragments_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+        <deepLink
+            app:uri="app://com.example.orders/orders" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.example.orders.OrderDetailFragment"
+        android:label="fragment_order_detail"
+        tools:layout="@layout/fragment_order_detail" >
+        <deepLink
+            app:uri="app://com.example.order/orderdetails" />
+    </fragment>
+
+</navigation>

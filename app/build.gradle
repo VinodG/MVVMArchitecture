@@ -99,6 +99,8 @@ dependencies {
 
     //hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
+    implementation project(path: ':products')
+    implementation project(path: ':orders')
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
 //    test
@@ -113,5 +115,11 @@ dependencies {
 //    testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:4.2.0'
     testImplementation 'org.mockito:mockito-inline:2.13.0'
+
+
+    // Kotlin
+    def nav_version = "2.3.5"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
 }

@@ -10,7 +10,7 @@ import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
-class ApiListVMTest {
+class ApiListVMTest2 {
 
     var repo = mock(CommonRepo::class.java)
     var preference = mock(Preference::class.java)
