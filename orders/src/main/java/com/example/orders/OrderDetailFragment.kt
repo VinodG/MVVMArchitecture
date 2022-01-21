@@ -1,20 +1,24 @@
 package com.example.orders
 
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import com.example.orders.databinding.FragmentOrderDetailBinding
-import com.example.orders.databinding.FragmentOrdersFragmentsBinding
+import com.navigation.Order
 
 class OrderDetailFragment : Fragment() {
-
     private lateinit var binding: FragmentOrderDetailBinding
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        println(args<Order>())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,10 +32,7 @@ class OrderDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnHome.setOnClickListener {
-            var request = NavDeepLinkRequest.Builder.fromUri(
-                "app://com.example.products/products".toUri()
-            ).build()
-            findNavController().navigate(request)
+            requireActivity().finish()
         }
     }
 

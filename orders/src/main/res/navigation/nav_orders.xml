@@ -11,11 +11,19 @@
         android:name="com.example.orders.OrdersFragments"
         android:label="OrdersFragments"
         tools:layout="@layout/fragment_orders_fragments">
+<!--        <argument-->
+<!--            android:name="item"-->
+<!--            android:defaultValue="@null"-->
+<!--            app:argType="com.navigation.Item" />-->
+<!--        <deepLink-->
+<!--            app:uri="app://order/orders?item={item}" />-->
+
         <action
             android:id="@+id/action_ordersFragments_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
         <deepLink
-            app:uri="app://com.example.orders/orders" />
+            app:uri="app://order/orders" />
+
 
     </fragment>
     <fragment
@@ -24,7 +32,7 @@
         android:label="fragment_order_detail"
         tools:layout="@layout/fragment_order_detail" >
         <deepLink
-            app:uri="app://com.example.order/orderdetails" />
+            app:uri="app://order/details" />
     </fragment>
 
 </navigation>

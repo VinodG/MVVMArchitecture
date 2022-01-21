@@ -10,3 +10,4 @@ rootProject.name = "MVVMArchitecture"
 include ':app'
 include ':products'
 include ':orders'
+include ':navigation'

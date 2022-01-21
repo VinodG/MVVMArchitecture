@@ -10,15 +10,16 @@
         android:name="com.example.products.ProductFragment"
         android:label="fragment_product"
         tools:layout="@layout/fragment_product">
-        <deepLink
-            app:uri="app://com.example.products/products" />
-        <action
-            android:id="@+id/action_productFragment_to_productDetailsFragment"
-            app:destination="@id/productDetailsFragment" />
+        <deepLink app:uri="app://product/products" />
+        <!--        <action-->
+        <!--            android:id="@+id/action_productFragment_to_productDetailsFragment"-->
+        <!--            app:destination="@id/productDetailsFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/productDetailsFragment"
         android:name="com.example.products.ProductDetailsFragment"
         android:label="fragment_product_details"
-        tools:layout="@layout/fragment_product_details" />
+        tools:layout="@layout/fragment_product_details">
+        <deepLink app:uri="app://product/details" />
+    </fragment>
 </navigation>

@@ -32,7 +32,7 @@ class SplashFragment : Fragment() {
         }
         binding.btnOrderDetails.setOnClickListener {
             var request = NavDeepLinkRequest.Builder.fromUri(
-                "app://com.example.order/orderdetails".toUri()
+                "app://order/details".toUri()
             ).build()
             findNavController().navigate(request)
         }

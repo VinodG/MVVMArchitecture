@@ -10,7 +10,7 @@
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.15760869565217392" />
         <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.15760869565217392" />
         <entry key="app/src/main/res/layout/item_post.xml" value="0.15760869565217392" />
-        <entry key="orders/src/main/res/layout/fragment_order_detail.xml" value="0.11524822695035461" />
+        <entry key="orders/src/main/res/layout/fragment_order_detail.xml" value="0.1" />
         <entry key="orders/src/main/res/layout/fragment_orders_fragments.xml" value="0.11524822695035461" />
         <entry key="products/src/main/res/layout/fragment_product.xml" value="0.11879432624113476" />
         <entry key="products/src/main/res/layout/fragment_product_details.xml" value="0.11879432624113476" />
