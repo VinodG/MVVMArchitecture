@@ -1,23 +1,20 @@
-package com.example.mvvmarchitecture.list.data
+package com.example.mvvmarchitecture.temp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mvvmarchitecture.base.Preference
-import com.example.mvvmarchitecture.data.Repo
+import com.example.mvvmarchitecture.R
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ApiListVM @Inject constructor(
-    private var repo: Repo,
-    private var preference: Preference
+class TempVM @Inject constructor(
+    var repo: TempRepo,
+    var resManager: TempResManager
 ) : ViewModel() {
 
 
@@ -57,33 +54,7 @@ class ApiListVM @Inject constructor(
         _tabNames.postValue(list.toList())
     }
 
-    fun filter(str: String) {
-        _apiResult.postValue(Results.Loading(true))
-        if (str.isEmpty() || str == "All") {
-            _apiResult.postValue(Results.Data(_posts))
-        } else {
-            _apiResult.postValue(Results.Data(_posts.filter { it.title?.equals(str) ?: false }))
-        }
-    }
-
-    var lastValue = 0
-    fun increment() {
-        viewModelScope.launch {
-            var inc = lastValue + 1
-            println("token-resume-incremented ${inc}")
-            preference.setToken(inc)
-        }
-    }
-
-    fun getCounter() {
-        viewModelScope.launch {
-            preference.getToken {
-                it.let {
-                    lastValue = it
-                    println("token -collect $it")
-                }
-            }
-        }
-    }
+    fun getString() =
+        resManager.getString(R.string.app_name)
 
 }

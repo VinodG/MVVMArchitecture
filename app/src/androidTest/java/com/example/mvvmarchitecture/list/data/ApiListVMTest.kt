@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 class ApiListVMTest : TestCase() {
 
     @get:Rule
-    val composeRule  = createAndroidComposeRule<ApiListActivity>()
+    val composeRule = createAndroidComposeRule<ApiListActivity>()
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -33,13 +33,15 @@ class ApiListVMTest : TestCase() {
 
     lateinit var viewModel: ApiListVM2
 
+//    var x = mock(CommonRepo::class.java)
+
     @Before
     fun setup() {
         viewModel = ApiListVM2(repo)
     }
 
     @Test
-    fun getxString(){
+    fun getxString() {
         println("appname : ${composeRule.activity.getString(R.string.app_name)}")
         assert(true)
     }
@@ -76,6 +78,5 @@ class ApiListVMTest : TestCase() {
         println("end : $response")
         assertEquals(response.size > 1, true)
     }
-
 
 }

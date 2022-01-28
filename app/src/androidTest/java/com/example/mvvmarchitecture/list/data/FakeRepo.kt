@@ -3,7 +3,6 @@ package com.example.mvvmarchitecture.list.data
 import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 
 @ExperimentalCoroutinesApi
 class FakeRepo : Repo {
