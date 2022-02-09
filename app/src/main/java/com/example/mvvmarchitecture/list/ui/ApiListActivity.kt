@@ -1,6 +1,5 @@
 package com.example.mvvmarchitecture.list.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,64 +14,42 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.mvvmarchitecture.data.CommonRepo
-import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
-import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.list.data.ApiListVM
-import com.example.mvvmarchitecture.login.ui.LoginActivity
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ApiListActivity : ComponentActivity() {
-
     val viewModel: ApiListVM by viewModels()
+    private val TAG = "ApiListActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getPost()
         setContent {
-            class FakeRepo : Repo{
-                override suspend fun getApi(): List<Post> {
-                    TODO("Not yet implemented")
-                }
-
-            }
-            viewModel.getPost()
-            viewModel.getCounter()
+            val tabNames by viewModel.tabNames.collectAsState()
+            val uiState = viewModel.uiData.collectAsState()
+            Log.e(TAG, "onCreate: ")
             MVVMArchitectureTheme {
-                println("recomposition")
-                val uiState by viewModel.apiResult.observeAsState()
-                val tabNames by viewModel.tabNames.observeAsState()
-//                val data by viewModel.filteredData.observeAsState()
                 Column {
                     TopSection(tabNames) {
-                        viewModel.filter(it)
+                        viewModel.onSelectedTab(it)
                     }
-                    uiState?.let {
-                        ApiListScreen(uiState = it)
+                    uiState.let {
+                        ApiListScreen(uiState = it.value)
                     }
-                   /* data?.let {
-                        (it as Results.Data<List<Post>>)
-                        if (!it.data.isEmpty())
-                            ApiListScreen(uiState = it)
-
-                    }*/
                 }
             }
         }
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.increment()
     }
 
 
@@ -85,11 +62,13 @@ class ApiListActivity : ComponentActivity() {
                     Text(
                         text = it[pos],
                         modifier = Modifier
-                            .padding(5.dp)
-                            .background(Color.Red)
-                            .padding(5.dp)
                             .clickable { function(it[pos]) }
-
+                            .padding(5.dp)
+                            .width(50.dp)
+                            .background(Color.Red)
+                            .padding(5.dp),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
                     )
                 }
             }
@@ -97,14 +76,18 @@ class ApiListActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ApiListScreen(uiState: Results<List<Post>>) {
+    fun ApiListScreen(uiState: Results) {
+//        Log.e(TAG, "ApiListScreen: $uiState")
         when (uiState) {
             is Results.Loading -> {
                 if (uiState.isLoading)
                     Loading()
             }
-            is Results.Data -> {
-                ListScreen(uiState.data)
+            is Results.Data<*> -> {
+                ListScreen(uiState.data as List<Post>)
+            }
+            is Results.Empty -> {
+                DataNotFound(uiState.data)
             }
             else -> {
                 ErrorScreen(uiState as Results.Error)
@@ -113,14 +96,29 @@ class ApiListActivity : ComponentActivity() {
 
     }
 
+    private @Composable
+    fun DataNotFound(data: String) {
+        Text(
+            text = data,
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .background(Color.Cyan),
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+
+    }
+
     @Composable
     fun Loading() {
         Text(
-            text = "Loading...",
+            text = "Loading",
             modifier = Modifier
-                .fillMaxWidth()
                 .fillMaxHeight()
-                .background(Color.Green)
+                .fillMaxWidth()
+                .background(Color.Green),
+            textAlign = TextAlign.Center
         )
     }
 
@@ -129,21 +127,18 @@ class ApiListActivity : ComponentActivity() {
         LazyColumn {
             itemsIndexed(list) { pos, data ->
                 Text(text = "Title : ${data.title} \nBody : ${data.body}",
-                    modifier = Modifier.clickable {
-                        startActivity(
-                            Intent(
-                                this@ApiListActivity,
-                                LoginActivity::class.java
-                            )
-                        )
-                    })
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clickable {
+                            viewModel.removeItem(data.id ?: "")
+                        })
                 Divider(Modifier.height(2.dp))
             }
         }
     }
 
     @Composable
-    fun ErrorScreen(error: Results.Error<List<Post>>) {
+    fun ErrorScreen(error: Results.Error) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

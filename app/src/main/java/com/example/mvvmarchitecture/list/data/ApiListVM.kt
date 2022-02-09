@@ -1,89 +1,70 @@
 package com.example.mvvmarchitecture.list.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ApiListVM @Inject constructor(
     private var repo: Repo,
-    private var preference: Preference
+    private var dispatcherIO: CoroutineDispatcher
 ) : ViewModel() {
 
+    private var TAB_ALL: String = "All"
 
-    private var _apiResult: MutableLiveData<Results<List<Post>>> = MutableLiveData()
-    val apiResult: LiveData<Results<List<Post>>>
-        get() = _apiResult
+    private var _api: MutableStateFlow<Results> = MutableStateFlow(Results.Loading(true))
+    private var _posts: MutableStateFlow<List<Post>?> = MutableStateFlow(null)
+    private var selectedTab: MutableSharedFlow<String> = MutableStateFlow(TAB_ALL)
+    private var filteredData = selectedTab.combine(_posts) { tabName, posts ->
+        posts?.filter { it.title == tabName || tabName == TAB_ALL } ?: listOf()
+    }
+    private var _tabNames = _posts.map { posts ->
+        posts?.filter { !it.title.isNullOrBlank() }?.map { it.title ?: "" }?.toMutableList()
+            ?.apply {
+                add(0, TAB_ALL)
+            } ?: listOf(TAB_ALL)
+    }.flowOn(dispatcherIO)
 
-    private var _posts: List<Post> = mutableListOf()
-    private var _tabNames: MutableLiveData<List<String>> = MutableLiveData()
-    val tabNames: LiveData<List<String>>
-        get() = _tabNames
 
-    private var selectedTab = "All"
+    val uiData: StateFlow<Results> = _api.combine(filteredData) { api, posts ->
+        when {
+            api == null -> api
+            posts.isEmpty() -> Results.Empty("Data not found")
+            else -> Results.Data(posts)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), Results.Loading(true))
 
+    val tabNames: StateFlow<List<String>> = _tabNames.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        listOf()
+    )
 
     fun getPost() {
-        viewModelScope.launch/*(Dispatchers.IO) */{
+        viewModelScope.launch(dispatcherIO) {
             try {
-                _apiResult.postValue(Results.Loading(true))
-                repo.getApi().apply {
-//                    delay(3000)
-                    _posts = this.toMutableList()
-                    _apiResult.postValue(Results.Data(_posts))
-                    getTabNames(_posts)
-                }
+                _api.emit(Results.Loading(true))
+                _posts.emit(repo.getApi())
             } catch (e: Exception) {
-                _apiResult.postValue(Results.Error(e))
+                _api.emit(Results.Error(e))
             }
+            _api.emit(Results.Loading(false))
         }
     }
 
-    private fun getTabNames(data: List<Post>) {
-        var list = mutableListOf<String>().apply {
-            add("All")
-        }
-        list.addAll(data.map { it.title ?: "" }.filter { it.isNotEmpty() }.distinct())
-        _tabNames.postValue(list.toList())
+    fun onSelectedTab(tabName: String) = viewModelScope.launch {
+        selectedTab.emit(tabName)
     }
 
-    fun filter(str: String) {
-        _apiResult.postValue(Results.Loading(true))
-        if (str.isEmpty() || str == "All") {
-            _apiResult.postValue(Results.Data(_posts))
-        } else {
-            _apiResult.postValue(Results.Data(_posts.filter { it.title?.equals(str) ?: false }))
-        }
-    }
-
-    var lastValue = 0
-    fun increment() {
-        viewModelScope.launch {
-            var inc = lastValue + 1
-            println("token-resume-incremented ${inc}")
-            preference.setToken(inc)
-        }
-    }
-
-    fun getCounter() {
-        viewModelScope.launch {
-            preference.getToken {
-                it.let {
-                    lastValue = it
-                    println("token -collect $it")
-                }
-            }
-        }
+    fun removeItem(id: String) = viewModelScope.launch(dispatcherIO) {
+        _posts.emit(_posts.value?.filter { it.id != id } ?: listOf())
     }
 
 }

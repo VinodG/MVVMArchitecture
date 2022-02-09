@@ -18,8 +18,8 @@ class TempVM @Inject constructor(
 ) : ViewModel() {
 
 
-    private var _apiResult: MutableLiveData<Results<List<Post>>> = MutableLiveData()
-    val apiResult: LiveData<Results<List<Post>>>
+    private var _apiResult: MutableLiveData<Results> = MutableLiveData()
+    val apiResult: LiveData<Results>
         get() = _apiResult
 
     private var _posts: List<Post> = mutableListOf()
