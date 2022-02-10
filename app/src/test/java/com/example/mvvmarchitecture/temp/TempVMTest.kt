@@ -44,7 +44,7 @@ class TempVMTest {
         vm.getPost()
         var list = vm.apiResult.getOrAwaitValue()
         println(list)
-        assert(list is Results.Data)
+        assert(list is Results.Data<*>)
     }
 
     @Test

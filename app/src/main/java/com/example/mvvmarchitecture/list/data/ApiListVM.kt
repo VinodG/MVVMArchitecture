@@ -21,8 +21,8 @@ class ApiListVM @Inject constructor(
 
     private var _api: MutableStateFlow<Results> = MutableStateFlow(Results.Loading(true))
     private var _posts: MutableStateFlow<List<Post>?> = MutableStateFlow(null)
-    private var selectedTab: MutableSharedFlow<String> = MutableStateFlow(TAB_ALL)
-    private var filteredData = selectedTab.combine(_posts) { tabName, posts ->
+    private var _selectedTab: MutableSharedFlow<String> = MutableStateFlow(TAB_ALL)
+    private var _filteredData = _selectedTab.combine(_posts) { tabName, posts ->
         posts?.filter { it.title == tabName || tabName == TAB_ALL } ?: listOf()
     }
     private var _tabNames = _posts.map { posts ->
@@ -33,7 +33,7 @@ class ApiListVM @Inject constructor(
     }.flowOn(dispatcherIO)
 
 
-    val uiData: StateFlow<Results> = _api.combine(filteredData) { api, posts ->
+    val uiData: StateFlow<Results> = _api.combine(_filteredData) { api, posts ->
         when {
             api == null -> api
             posts.isEmpty() -> Results.Empty("Data not found")
@@ -60,7 +60,7 @@ class ApiListVM @Inject constructor(
     }
 
     fun onSelectedTab(tabName: String) = viewModelScope.launch {
-        selectedTab.emit(tabName)
+        _selectedTab.emit(tabName)
     }
 
     fun removeItem(id: String) = viewModelScope.launch(dispatcherIO) {
