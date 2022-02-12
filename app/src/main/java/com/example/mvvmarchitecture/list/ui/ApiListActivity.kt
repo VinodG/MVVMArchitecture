@@ -126,12 +126,16 @@ class ApiListActivity : ComponentActivity() {
     fun ListScreen(list: List<Post>) {
         LazyColumn {
             itemsIndexed(list) { pos, data ->
-                Text(text = "Title : ${data.title} \nBody : ${data.body}",
+                Text(
+                    text = "Title : ${data.title} \nBody : ${data.body}",
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                         .clickable {
                             viewModel.removeItem(data.id ?: "")
-                        })
+                        },
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 3
+                )
                 Divider(Modifier.height(2.dp))
             }
         }
