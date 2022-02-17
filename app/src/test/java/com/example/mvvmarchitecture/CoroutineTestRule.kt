@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import kotlin.coroutines.ContinuationInterceptor
 
 @ExperimentalCoroutinesApi
 class CoroutineTestRule(
@@ -17,6 +18,7 @@ class CoroutineTestRule(
 
     override fun starting(description: Description?) {
         super.starting(description)
+//        Dispatchers.setMain(this.coroutineContext[ContinuationInterceptor] as CoroutineDispatcher)
         Dispatchers.setMain(dispatcher)
     }
 

@@ -5,6 +5,7 @@ import com.example.mvvmarchitecture.CoroutineTestRule
 import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.CommonRepo
 import com.example.mvvmarchitecture.data.models.Post
+import com.example.mvvmarchitecture.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -32,7 +33,7 @@ class ApiListVM2Test {
     fun setUp() {
         runBlocking {
             vm = ApiListVM(repo, preference)
-            `when`(repo.getApi()).thenReturn(listOf(Post()))
+            `when`(repo.getApi()).thenReturn(listOf(Post(title = "vinod")))
         }
     }
 
@@ -40,6 +41,16 @@ class ApiListVM2Test {
     fun `get() return list of Posts`() = runBlocking {
         var p = repo.getApi()
         Assert.assertEquals(p, listOf(Post(userId = null)))
+    }
+
+    @Test
+    fun `get() return tab names `() = runBlocking {
+        vm.getPost()
+//        var x = vm.apiResult.getOrAwaitValue()
+//        println(x)
+        var list = vm.tabNames.getOrAwaitValue()
+        println(list)
+        Assert.assertEquals(2, list.size)
     }
 
     @Test

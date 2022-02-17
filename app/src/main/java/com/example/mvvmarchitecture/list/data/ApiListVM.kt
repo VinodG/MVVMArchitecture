@@ -1,16 +1,11 @@
 package com.example.mvvmarchitecture.list.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,9 +21,22 @@ class ApiListVM @Inject constructor(
         get() = _apiResult
 
     private var _posts: List<Post> = mutableListOf()
-    private var _tabNames: MutableLiveData<List<String>> = MutableLiveData()
-    val tabNames: LiveData<List<String>>
-        get() = _tabNames
+
+    val tabNames: LiveData<List<String>> = _apiResult.switchMap { result ->
+        liveData {
+            emit(
+                if (result is Results.Data) {
+                    result.data.map { it.title ?: "" }
+                        .filter { it.isNotEmpty() }
+                        .distinct().toMutableList().apply {
+                            add(0, "ALL")
+                        }
+                } else
+                    listOf("ALL")
+            )
+        }
+    }
+
 
     private var selectedTab = "All"
 
@@ -41,20 +49,11 @@ class ApiListVM @Inject constructor(
 //                    delay(3000)
                     _posts = this.toMutableList()
                     _apiResult.postValue(Results.Data(_posts))
-                    getTabNames(_posts)
                 }
             } catch (e: Exception) {
                 _apiResult.postValue(Results.Error(e))
             }
         }
-    }
-
-    private fun getTabNames(data: List<Post>) {
-        var list = mutableListOf<String>().apply {
-            add("All")
-        }
-        list.addAll(data.map { it.title ?: "" }.filter { it.isNotEmpty() }.distinct())
-        _tabNames.postValue(list.toList())
     }
 
     fun filter(str: String) {
