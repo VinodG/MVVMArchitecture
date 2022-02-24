@@ -37,11 +37,11 @@ class ApiListVM2Test {
         }
     }
 
-    @Test
-    fun `get() return list of Posts`() = runBlocking {
-        var p = repo.getApi()
-        Assert.assertEquals(p, listOf(Post(userId = null)))
-    }
+//    @Test
+//    fun `get() return list of Posts`() = runBlocking {
+//        var p = repo.getApi()
+//        Assert.assertEquals(p, listOf(Post(userId = null)))
+//    }
 
     @Test
     fun `get() return tab names `() = runBlocking {

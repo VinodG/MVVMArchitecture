@@ -33,8 +33,6 @@ class ApiListVMTest : TestCase() {
 
     lateinit var viewModel: ApiListVM2
 
-//    var x = mock(CommonRepo::class.java)
-
     @Before
     fun setup() {
         viewModel = ApiListVM2(repo)
@@ -52,24 +50,8 @@ class ApiListVMTest : TestCase() {
         val response = viewModel.apiResult.getOrAwaitValue()
         println("end : $response")
         assertEquals(response is Results.Loading, true)
-//        viewModel.apiResult.observeForTesting {
-//            var res = viewModel.apiResult.value
-//            println("received :  " + viewModel.apiResult.value)
-//            assertEquals(res is Results.Data<*>, true)
-//        }
     }
 
-    @Test
-    fun receivedTestDataAfterLoading() = runBlockingTest {
-        viewModel.getPost()
-        var response = viewModel.apiResult.getOrAwaitValue()
-        println("end : $response")
-        assertEquals(response is Results.Loading, true)
-        delay(10000)
-        response = viewModel.apiResult.getOrAwaitValue()
-        println("end : $response")
-        assertEquals(response is Results.Data<*>, true)
-    }
 
     @Test
     fun testTabNames() = runBlockingTest {

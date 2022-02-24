@@ -1,6 +1,6 @@
 package com.example.mvvmarchitecture.list.ui
 
-import android.content.Intent
+//import com.example.mvvmarchitecture.login.ui.LoginActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,10 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,11 +16,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.list.data.ApiListVM
-import com.example.mvvmarchitecture.login.ui.LoginActivity
 import com.example.mvvmarchitecture.temp.TempVM
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -106,43 +101,6 @@ class ApiListActivity : ComponentActivity() {
 
     }
 
-    @Composable
-    fun Loading() {
-        Text(
-            text = "Loading...",
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color.Green)
-        )
-    }
 
-    @Composable
-    fun ListScreen(list: List<Post>) {
-        LazyColumn {
-            itemsIndexed(list) { pos, data ->
-                Text(text = "Title : ${data.title} \nBody : ${data.body}",
-                    modifier = Modifier.clickable {
-                        startActivity(
-                            Intent(
-                                this@ApiListActivity,
-                                LoginActivity::class.java
-                            )
-                        )
-                    })
-                Divider(Modifier.height(2.dp))
-            }
-        }
-    }
 
-    @Composable
-    fun ErrorScreen(error: Results.Error<List<Post>>) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            Text(text = error.error.message ?: "Error is occured")
-        }
-    }
 }

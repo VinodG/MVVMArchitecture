@@ -1,9 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-//    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
+
 
 }
 
@@ -24,6 +25,9 @@ android {
     }
 
     buildTypes {
+        debug{
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -110,6 +114,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
+
 
 //Mocktio
 //    testImplementation 'junit:junit:4.12'
