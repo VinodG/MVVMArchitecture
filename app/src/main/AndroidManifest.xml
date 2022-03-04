@@ -14,24 +14,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".list.ui.ApiListActivity"
+            android:name=".multilevel.DropdownAndSortActivity"
             android:exported="true"
-            android:label="@string/title_activity_api_list"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" >
+            android:label="@string/title_activity_dropdown_and_sort"
+            android:theme="@style/Theme.MVVMArchitecture">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".login.ui.LoginActivity"
-            android:exported="true">
+            android:name=".list.ui.ApiListActivity"
+            android:exported="true"
+            android:label="@string/title_activity_api_list"
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar">
+
         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar"></activity>
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" />
     </application>
 
 </manifest>

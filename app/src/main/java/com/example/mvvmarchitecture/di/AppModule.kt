@@ -1,7 +1,5 @@
 package com.example.mvvmarchitecture.di
 
-import android.content.Context
-import com.example.mvvmarchitecture.base.Preference
 import com.example.mvvmarchitecture.data.CommonRepo
 import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.remote.Api
@@ -9,7 +7,6 @@ import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
