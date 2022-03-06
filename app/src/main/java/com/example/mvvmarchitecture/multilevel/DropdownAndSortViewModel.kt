@@ -13,13 +13,15 @@ import javax.inject.Inject
 class DropdownAndSortViewModel @Inject constructor(
     private val repo: Repo
 ) : ViewModel() {
-    var _products: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
+    private var _products: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
+
     //    var _products: Flow<List<Product>> =
 //        repo.getList().filter { it is Network.Data }.map { (it as Network.Data).data }
 //            .flowOn(Dispatchers.IO)
     init {
         getProducts()
     }
+
     private fun getProducts() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getList().filter { it is Network.Data }
@@ -28,13 +30,13 @@ class DropdownAndSortViewModel @Inject constructor(
                 }
         }
     }
+
     val isSortOpen = MutableStateFlow(false)
     var _categories: Flow<List<String>> =
         _products.map { it.map { it.category }.distinct() }.flowOn(Dispatchers.IO)
     private var _selectedCategory: MutableStateFlow<String> = MutableStateFlow("All")
     private var _subCategoryTick: MutableStateFlow<MutableList<String>> =
         MutableStateFlow(mutableListOf())
-
     private var _subCategoryFinal: MutableStateFlow<MutableList<String>> =
         MutableStateFlow(mutableListOf())
     var _subCategories: Flow<List<Pair<Boolean, String>>> =
@@ -50,6 +52,10 @@ class DropdownAndSortViewModel @Inject constructor(
             products.map { Pair(subcategories.contains(it.subSubCategory), it.subSubCategory) }
                 .distinct()
         }
+    var filterCount =
+        combine(_subCategoryFinal, _subSubCategoryFinal) { subCategory, subSubCategory ->
+            subCategory.size + subSubCategory.size
+        }
     var isExisted: (MutableList<String>?, String) -> Boolean =
         { list, selected -> if (list.isNullOrEmpty()) true else list.contains(selected) }
     var _productByCategory = combine(
@@ -64,7 +70,6 @@ class DropdownAndSortViewModel @Inject constructor(
             )
         }
     }
-
 
     fun selectedSubCategory(subCategory: String) = viewModelScope.launch {
         val list = _subCategoryTick.value.toMutableList()
@@ -101,7 +106,6 @@ class DropdownAndSortViewModel @Inject constructor(
         _subSubCategoryFinal.emit(_subSubCategoryTick.value.toMutableList())
         toggleSortSection()
     }
-
 
 }
 

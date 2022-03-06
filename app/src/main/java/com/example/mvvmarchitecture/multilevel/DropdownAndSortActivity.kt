@@ -59,14 +59,15 @@ class DropdownAndSortActivity : ComponentActivity() {
 
     @Composable
     fun MainScreen(vm: DropdownAndSortViewModel) {
-        var products = vm._productByCategory.collectAsState(initial = listOf())
-        var categories = vm._categories.collectAsState(initial = listOf())
+        val products by vm._productByCategory.collectAsState(initial = listOf())
+        val categories by vm._categories.collectAsState(initial = listOf())
+        val count by vm.filterCount.collectAsState(initial = 0)
 
         Button(onClick = { vm.toggleSortSection() }) {
             Text(text = "Open")
         }
-        DropDownSection(categories.value, vm::selectedCategory)
-        ProductList(products.value) {}
+        DropDownSection(categories, count.toString(), vm::selectedCategory)
+        ProductList(products) {}
 
     }
 }

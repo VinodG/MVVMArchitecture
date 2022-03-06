@@ -13,7 +13,8 @@ import kotlinx.coroutines.Job
 
 
 @Composable
-fun DropDownSection(list: List<String>, onClick: (String) -> Job) {
+fun DropDownSection(list: List<String>, count: String, onClick: (String) -> Job) {
+    Text(text = "($count)")
     LazyRow {
         items(list) { category ->
             Row(
