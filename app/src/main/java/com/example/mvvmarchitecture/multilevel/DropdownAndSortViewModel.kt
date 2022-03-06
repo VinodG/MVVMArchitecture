@@ -13,26 +13,24 @@ import javax.inject.Inject
 class DropdownAndSortViewModel @Inject constructor(
     private val repo: Repo
 ) : ViewModel() {
-    private var _products: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
+    private var _networkStatus: MutableStateFlow<Network> = MutableStateFlow(Network.Load)
+    private var _products: Flow<List<Product>> =
+        _networkStatus.filter { it is Network.Data }.map { (it as Network.Data).data }
 
-    //    var _products: Flow<List<Product>> =
-//        repo.getList().filter { it is Network.Data }.map { (it as Network.Data).data }
-//            .flowOn(Dispatchers.IO)
     init {
         getProducts()
     }
 
     private fun getProducts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.getList().filter { it is Network.Data }
-                .map { (it as Network.Data).data }.collect {
-                    _products.emit(it)
-                }
+        viewModelScope.launch {
+            repo.getList().collect {
+                _networkStatus.emit(it)
+            }
         }
     }
 
     val isSortOpen = MutableStateFlow(false)
-    var _categories: Flow<List<String>> =
+    private var _categories: Flow<List<String>> =
         _products.map { it.map { it.category }.distinct() }.flowOn(Dispatchers.IO)
     private var _selectedCategory: MutableStateFlow<String> = MutableStateFlow("All")
     private var _subCategoryTick: MutableStateFlow<MutableList<String>> =
@@ -52,23 +50,45 @@ class DropdownAndSortViewModel @Inject constructor(
             products.map { Pair(subcategories.contains(it.subSubCategory), it.subSubCategory) }
                 .distinct()
         }
-    var filterCount =
-        combine(_subCategoryFinal, _subSubCategoryFinal) { subCategory, subSubCategory ->
-            subCategory.size + subSubCategory.size
-        }
-    var isExisted: (MutableList<String>?, String) -> Boolean =
+    private var isExisted: (MutableList<String>?, String) -> Boolean =
         { list, selected -> if (list.isNullOrEmpty()) true else list.contains(selected) }
-    var _productByCategory = combine(
-        _products, _selectedCategory, _subCategoryFinal, _subSubCategoryFinal
-    ) { products, selected, subCategories, subSubCategories ->
-        (if (selected == "All")
-            products
-        else
-            products.filter { it.category == selected }).filter {
-            isExisted(subCategories, it.subCategory).and(
-                isExisted(subSubCategories, it.subSubCategory)
-            )
-        }
+    var productByCategory = combine(
+        _networkStatus, /*_products,*/ _selectedCategory, _subCategoryFinal, _subSubCategoryFinal
+    ) { network, /*products,*/ selected, subCategories, subSubCategories ->
+        if (network is Network.Error) {
+            MainScreenAction.Error(network.exception.message.toString())
+        } else if (network is Network.Data) {
+            var list = network.data
+            if (list.isEmpty()) {
+                MainScreenAction.Empty("No data found")
+            } else {
+                MainScreenAction.Data((if (selected == "All") list else list.filter { it.category == selected }).filter {
+                    isExisted(subCategories, it.subCategory).and(
+                        isExisted(subSubCategories, it.subSubCategory)
+                    )
+                }.mapIndexed { index, product -> Pair(index, product.toProductUi()) })
+            }
+        } else
+            MainScreenAction.Loading
+    }.flowOn(Dispatchers.IO)
+
+    val headerSection = combine(
+        _networkStatus,
+        _categories,
+        _subCategoryFinal,
+        _subSubCategoryFinal,
+        _selectedCategory
+    ) { network, categories, subCategories, subSubCategories, selectedCategory ->
+        if (network is Network.Data) {
+            if (network.data.isNotEmpty())
+                DropDownHeaderAction(
+                    selectedCategory = selectedCategory,
+                    count = (subCategories.size + subSubCategories.size).toString(),
+                    categories = categories.toMutableList().apply { add(0, "All") }
+                )
+            else DropDownHeaderAction(isShowing = false)
+        } else
+            DropDownHeaderAction(isShowing = false)
     }
 
     fun selectedSubCategory(subCategory: String) = viewModelScope.launch {

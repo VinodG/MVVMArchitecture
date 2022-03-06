@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.mvvmarchitecture.multilevel.MainScreenAction.*
 import com.example.mvvmarchitecture.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,15 +60,17 @@ class DropdownAndSortActivity : ComponentActivity() {
 
     @Composable
     fun MainScreen(vm: DropdownAndSortViewModel) {
-        val products by vm._productByCategory.collectAsState(initial = listOf())
-        val categories by vm._categories.collectAsState(initial = listOf())
-        val count by vm.filterCount.collectAsState(initial = 0)
-
-        Button(onClick = { vm.toggleSortSection() }) {
-            Text(text = "Open")
+        val products by vm.productByCategory.collectAsState(initial = Loading)
+        val header by vm.headerSection.collectAsState(initial = DropDownHeaderAction(isShowing = false))
+        if (header.isShowing) {
+            Text(text = header.selectedCategory)
+            DropDownSection(header.categories, header.count, vm::selectedCategory, vm::toggleSortSection)
         }
-        DropDownSection(categories, count.toString(), vm::selectedCategory)
-        ProductList(products) {}
-
+        when (products) {
+            is Loading -> Text("Loading")
+            is Empty -> Text((products as Empty).message)
+            is Error -> Text((products as Error).message)
+            is Data -> ProductList((products as Data).products) {}
+        }
     }
 }

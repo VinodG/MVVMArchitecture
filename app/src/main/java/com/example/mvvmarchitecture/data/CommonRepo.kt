@@ -4,20 +4,23 @@ import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.multilevel.Network
 import com.example.mvvmarchitecture.multilevel.Product
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import java.lang.Exception
 import javax.inject.Inject
 
 class CommonRepo @Inject constructor(private var api: Api) : Repo {
     override suspend fun getApi() = api.get()
 
-    //    override fun getList(): kotlinx.coroutines.flow.Flow<Network> {
     override fun getList() = flow<Network> {
         var list = mutableListOf<Product>()
         var i = 1
+        emit(Network.Load)
         delay(2000)
-        repeat(3) { product ->
-            repeat(5) { category ->
+        repeat(2) { product ->
+            repeat(2) { category ->
                 repeat(2) { subCategory ->
                     repeat(2) { subSubCategory ->
                         list.add(
@@ -39,8 +42,10 @@ class CommonRepo @Inject constructor(private var api: Api) : Repo {
         }
         println("loading")
         emit(Network.Data(list))
+//        emit(Network.Data(listOf()))
+//        emit(Network.Error(Exception("network eroror")))
         println("done")
-    }
+    }.flowOn(Dispatchers.IO)
 
 }
 

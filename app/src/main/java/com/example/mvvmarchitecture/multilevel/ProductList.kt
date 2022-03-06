@@ -11,14 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProductList(list: List<Product>, onClick: (Product) -> Unit) {
+fun ProductList(list: List<Pair<Int, ProductUi>>, onClick: (Int) -> Unit) {
     LazyColumn {
         items(list) { product ->
             Row(
                 Modifier
                     .padding(4.dp)
-                    .clickable { onClick(product) }) {
-                Text(text = "${product.name} \n${product.category} \n${product.subCategory}\n${product.subSubCategory}")
+                    .clickable { onClick(product.first) }) {
+                Text(text = "${product.second.name} \n${product.second.category} \n${product.second.subCategory}\n${product.second.subSubCategory}")
             }
         }
     }
