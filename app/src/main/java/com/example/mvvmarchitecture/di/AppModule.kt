@@ -1,20 +1,25 @@
 package com.example.mvvmarchitecture.di
 
-import com.example.mvvmarchitecture.data.CommonRepo
-import com.example.mvvmarchitecture.data.Repo
+import android.util.Log
 import com.example.mvvmarchitecture.data.remote.Api
+import com.example.mvvmarchitecture.data.remote.ChatRepo
+import com.example.mvvmarchitecture.data.remote.CommonRepo
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.IO
+import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URISyntaxException
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,8 +49,27 @@ class AppModule {
             .build()
             .create(Api::class.java)
 
+//    @Provides
+//    fun provideRepo(api: Api): CommonRepo = CommonRepo(api)
+
     @Provides
-    fun provideRepo(api: Api): Repo = CommonRepo(api)
+    fun provideChatRepo(): Socket? {
+        val opts = IO.Options()
+        opts.forceNew = true
+        opts.reconnection = true
+        var socket: Socket? = null
+        try {
+            socket = IO.socket("http://99.79.15.95:8090/chat/", opts)
+        } catch (e: URISyntaxException) {
+            e.printStackTrace()
+            Log.e("Appmodule", Exception().stackTrace[0].methodName)
+        }
+        return socket
+    }
+
+    @Singleton
+    @Provides
+    fun provideRepo(socket: Socket?): ChatRepo = ChatRepo(socket)
 
     @Provides
     fun providesDispatcherIO(): CoroutineDispatcher = Dispatchers.IO

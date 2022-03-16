@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.widget.Toast
-import com.example.mvvmarchitecture.data.models.Post
 
 fun Activity.performOnInternet(onNoInternet: (() -> Unit)? = null, onInternet: () -> Unit) {
     val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
