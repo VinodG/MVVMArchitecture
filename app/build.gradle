@@ -4,6 +4,7 @@ plugins {
 //    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlinx-serialization'
 
 }
 
@@ -52,6 +53,7 @@ android {
     buildFeatures {
         dataBinding true
     }
+
 }
 
 dependencies {
@@ -102,4 +104,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+//    Ktor
+    implementation 'io.ktor:ktor-client-android:1.5.0'
+    implementation 'io.ktor:ktor-client-serialization:1.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
+    implementation 'io.ktor:ktor-client-logging-jvm:1.5.0'
 }

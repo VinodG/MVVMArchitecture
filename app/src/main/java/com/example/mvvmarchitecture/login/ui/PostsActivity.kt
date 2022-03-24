@@ -12,7 +12,6 @@ import com.example.mvvmarchitecture.data.remote.Results
 import com.example.mvvmarchitecture.databinding.ActivityPostBinding
 import com.example.mvvmarchitecture.extension.performOnInternet
 import com.example.mvvmarchitecture.extension.toast
-import com.example.mvvmarchitecture.login.viewmodela.LoginVM
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,10 +19,11 @@ import javax.inject.Inject
 class PostsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPostBinding
-    val vm: LoginVM by viewModels()
 
     @Inject
     lateinit var postAdapter: PostAdapter
+
+    val vm: PostViewModel by viewModels()
 
     @Inject
     lateinit var alert: CommonDialog
@@ -34,9 +34,9 @@ class PostsActivity : AppCompatActivity() {
         setObservers()
         getPost()
         setListeners()
-        alert.body("message", header = "vinod", negCallBack = {
-            alert.dismiss()
-        }).show()
+//        alert.body("message", header = "vinod", negCallBack = {
+//            alert.dismiss()
+//        }).show()
 
     }
 
@@ -54,23 +54,23 @@ class PostsActivity : AppCompatActivity() {
     }
 
     private fun setObservers() {
-        vm.lvPost.observe(this, {
-            binding.apply {
-                when (it) {
-                    is Results.Data -> {
-                        showError = false
-                        setPosts(vm.arrTemp)
-                    }
-                    is Results.Error -> {
-                        showError = true
-                    }
-                }
-            }
-
-        })
-        vm.lvLoader.observe(this, {
-            binding.loading = it
-        })
+//        vm.lvPost.observe(this, {
+//            binding.apply {
+//                when (it) {
+//                    is Results.Data -> {
+//                        showError = false
+//                        setPosts(vm.arrTemp)
+//                    }
+//                    is Results.Error -> {
+//                        showError = true
+//                    }
+//                }
+//            }
+//
+//        })
+//        vm.lvLoader.observe(this, {
+//            binding.loading = it
+//        })
     }
 
     private fun setPosts(arrTemp: List<Post>) {
