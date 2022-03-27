@@ -34,10 +34,6 @@ class PostsActivity : AppCompatActivity() {
         setObservers()
         getPost()
         setListeners()
-//        alert.body("message", header = "vinod", negCallBack = {
-//            alert.dismiss()
-//        }).show()
-
     }
 
 
@@ -48,37 +44,14 @@ class PostsActivity : AppCompatActivity() {
             }
             rv.adapter = postAdapter
             etSearch.addTextChangedListener {
-                vm.filter(it.toString())
+
             }
         }
     }
 
     private fun setObservers() {
-//        vm.lvPost.observe(this, {
-//            binding.apply {
-//                when (it) {
-//                    is Results.Data -> {
-//                        showError = false
-//                        setPosts(vm.arrTemp)
-//                    }
-//                    is Results.Error -> {
-//                        showError = true
-//                    }
-//                }
-//            }
-//
-//        })
-//        vm.lvLoader.observe(this, {
-//            binding.loading = it
-//        })
     }
 
-    private fun setPosts(arrTemp: List<Post>) {
-        postAdapter.refresh(arrTemp) {
-            var post = arrTemp[it]
-            toast(post.body ?: "")
-        }
-    }
 
     private fun getPost() = performOnInternet({
         binding.showError = true

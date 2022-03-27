@@ -17,13 +17,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PostViewModel @Inject constructor() : ViewModel() {
-    fun filter(str: String) {
-
-    }
+class PostViewModel @Inject constructor(var repository: PostRepository) : ViewModel() {
 
     fun getPost() {
         viewModelScope.launch(Dispatchers.IO) {
+            println("Testing : " + repository.getPosts().toString())
             kotlinx.serialization.json.Json {
                 ignoreUnknownKeys = true
             }
@@ -38,8 +36,17 @@ class PostViewModel @Inject constructor() : ViewModel() {
             var data: List<Post> = client.get<List<Post>> {
                 url(NetworkUrl.BASE_URL + NetworkUrl.URL)
             }
+            data[0].let {
+                repository.insert(
+                    com.example.mvvmarchitecture.data.entity.Post(
+                        it.id,
+                        it.userId,
+                        it.title,
+                        it.body
+                    )
+                )
+            }
             println("response $data")
-
         }
 
     }

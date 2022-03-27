@@ -1,10 +1,13 @@
 package com.example.mvvmarchitecture.di
 
+import android.content.Context
+import com.example.mvvmarchitecture.data.entity.MyRoomDatabase
 import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +45,12 @@ class AppModule {
             .build()
             .create(Api::class.java)
 
+    @Provides
+    fun provideRoomDatabase(@ApplicationContext context: Context): MyRoomDatabase =
+        MyRoomDatabase.getDatabase(context = context)
 
+    @Provides
+    fun providePostDao(db: MyRoomDatabase) = db.postDao()
 
 
     @Provides
