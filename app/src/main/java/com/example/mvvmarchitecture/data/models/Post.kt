@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Post(
-    var userId: String? = null,
-    var id: String? = null,
+    var userId: Int? = null,
+    var id: Int? = null,
     var title: String? = null,
     var body: String? = null,
 )

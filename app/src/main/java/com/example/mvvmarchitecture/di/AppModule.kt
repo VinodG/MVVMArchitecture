@@ -6,6 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -31,7 +33,6 @@ class AppModule {
     @Provides
     fun serialization() = GsonConverterFactory.create()
 
-
     @Provides
     fun retrofitBuilder(client: OkHttpClient, factory: GsonConverterFactory): Api =
         Retrofit.Builder()
@@ -40,5 +41,11 @@ class AppModule {
             .addConverterFactory(factory)
             .build()
             .create(Api::class.java)
+
+
+
+
+    @Provides
+    fun providesDispatcherIO(): CoroutineDispatcher = Dispatchers.IO
 
 }

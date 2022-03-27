@@ -35,10 +35,10 @@ class PostViewModel @Inject constructor() : ViewModel() {
                     serializer = KotlinxSerializer()
                 }
             }
-            var data: List<Post> = client.get {
+            var data: List<Post> = client.get<List<Post>> {
                 url(NetworkUrl.BASE_URL + NetworkUrl.URL)
             }
-            println(data.size)
+            println("response $data")
 
         }
 
