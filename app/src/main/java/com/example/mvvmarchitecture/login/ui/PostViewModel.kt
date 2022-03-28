@@ -26,19 +26,23 @@ class PostViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             kotlinx.serialization.json.Json {
                 ignoreUnknownKeys = true
+                isLenient =true
             }
             val client = HttpClient(Android) {
                 install(Logging) {
                     level = LogLevel.ALL
                 }
                 install(JsonFeature) {
-                    serializer = KotlinxSerializer()
+                    serializer = KotlinxSerializer(json = kotlinx.serialization.json.Json {
+                        isLenient = true
+                        ignoreUnknownKeys = true
+                    })
                 }
             }
             var data: List<Post> = client.get {
                 url(NetworkUrl.BASE_URL + NetworkUrl.URL)
             }
-            println(data.size)
+            println("size : "+data.size)
 
         }
 
