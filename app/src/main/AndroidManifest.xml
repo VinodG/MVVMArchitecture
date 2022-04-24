@@ -14,10 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".multilevel.DropdownAndSortActivity"
-            android:exported="true"
-            android:label="@string/title_activity_dropdown_and_sort"
-            android:theme="@style/Theme.MVVMArchitecture">
+            android:name=".paging.ProductsActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,12 +23,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".multilevel.DropdownAndSortActivity"
+            android:exported="true"
+            android:label="@string/title_activity_dropdown_and_sort"
+            android:theme="@style/Theme.MVVMArchitecture">
+
+        </activity>
+        <activity
             android:name=".list.ui.ApiListActivity"
             android:exported="true"
             android:label="@string/title_activity_api_list"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

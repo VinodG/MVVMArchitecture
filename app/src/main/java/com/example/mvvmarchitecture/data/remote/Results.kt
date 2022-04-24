@@ -8,5 +8,5 @@ sealed class Results {
 
     data class Data<T>(val data: T) : Results()
     data class Empty(val data: String) : Results()
-    data class Loading(val isLoading: Boolean) : Results()
+    data class Loading(val isLoading: Boolean=true) : Results()
 }
