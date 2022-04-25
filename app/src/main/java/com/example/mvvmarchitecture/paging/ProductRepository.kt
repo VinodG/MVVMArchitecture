@@ -19,7 +19,7 @@ class ProductRepository @Inject constructor(private var apiProduct: ProductApi) 
                 var products = (it.data as List<Product>)
                 var x = prod.toMutableSet().apply {
                     addAll(products)
-                }.toMutableList()
+                }.toMutableSet().toMutableList()
                 prod = x
                 println("after test: ${x.size}   $pageNumber")
                 this.pageNumber++

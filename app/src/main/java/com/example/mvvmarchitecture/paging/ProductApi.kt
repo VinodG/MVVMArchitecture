@@ -13,9 +13,10 @@ class ProductApi @Inject constructor() {
     fun getProducts(pageSize: Int, pageNumber: Int, startIndex: Int = 0) = flow<Results> {
         emit(Results.Loading(true))
         delay(100)
-        println("test: getProduccts")
-        emit(Results.Data(((pageSize - 1) * pageSize..pageNumber * pageSize).map {
+        val products = Results.Data(((pageNumber - 1) * pageSize..pageNumber * pageSize).map {
             Product(id = it, name = "Product name: $it")
-        }.toList()))
+        }.toList())
+        emit(products)
+        println("test:  productapi ${products.data.size}")
     }
 }
