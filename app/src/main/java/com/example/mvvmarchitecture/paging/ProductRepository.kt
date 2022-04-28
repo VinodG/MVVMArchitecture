@@ -6,9 +6,7 @@ import javax.inject.Inject
 
 class ProductRepository @Inject constructor(private var apiProduct: ProductApi) {
 
-    private var _products: MutableStateFlow<List<Product>> = MutableStateFlow<List<Product>>(
-        listOf()
-    )
+    private var _products: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
     var products: Flow<List<Product>> = _products
     var prod = listOf<Product>()
     var pageNumber: Int = 1
@@ -18,11 +16,12 @@ class ProductRepository @Inject constructor(private var apiProduct: ProductApi) 
             if (it is Results.Data<*>) {
                 var products = (it.data as List<Product>)
                 var x = prod.toMutableSet().apply {
-                    addAll(products)
-                }.toMutableSet().toMutableList()
+                    addAll(products.toMutableSet())
+                }.toMutableList()
                 prod = x
-                println("after test: ${x.size}   $pageNumber")
-                this.pageNumber++
+                this.pageNumber = products.size / ProductViewModel.PAGE_SIZE + 1
+                println("after test: ${x.size}   $pageNumber  ${this.pageNumber}")
+
                 _products.emit(x)
             }
         }
