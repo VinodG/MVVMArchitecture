@@ -3,6 +3,7 @@ package com.example.mvvmarchitecture.login.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.toSpannable
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import com.example.mvvmarchitecture.extension.performOnInternet
 import com.example.mvvmarchitecture.extension.toast
 import com.example.mvvmarchitecture.login.viewmodela.LoginVM
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var postAdapter: PostAdapter
+    val tagAdapter: TagsAdapter by lazy { TagsAdapter(listOf()) }
 
     @Inject
     lateinit var preference: Preference
@@ -37,11 +40,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("result: ${appViewModel.x}")
         appViewModel.x = 3
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setObservers()
         getPost()
+        vm.getTags()
         setListeners()
         lifecycleScope.launch {
             preference.getToken {
@@ -56,15 +59,18 @@ class LoginActivity : AppCompatActivity() {
             tvRetry.setOnClickListener {
                 getPost()
             }
-            rv.adapter = postAdapter
+            rv.adapter = tagAdapter
+//            rv.adapter = postAdapter
             etSearch.addTextChangedListener {
-                vm.filter(it.toString())
+                if (it == null)
+                    return@addTextChangedListener
+                vm.filter(it.toSpannable())
             }
         }
     }
 
     private fun setObservers() {
-        vm.lvPost.observe(this, {
+        vm.lvPost.observe(this) {
             binding.apply {
                 when (it) {
                     is Results.Data -> {
@@ -79,9 +85,28 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-        })
+        }
         vm.lvLoader.observe(this) {
             binding.loading = it
+        }
+        lifecycleScope.launchWhenStarted {
+            vm.tags.collect {
+                when (it) {
+                    is Results.Loading -> {
+                        binding.loading = true
+                    }
+                    is Results.Data -> {
+                        binding.loading = false
+                        tagAdapter.refresh(it.data)
+                    }
+                }
+
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            vm.tagText.collect {
+                binding.tvPreview.text = it
+            }
         }
     }
 

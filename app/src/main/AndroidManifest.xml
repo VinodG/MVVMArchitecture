@@ -13,26 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
+
         <activity
-            android:name=".list.ui.ApiListActivity"
-            android:exported="true"
-            android:label="@string/title_activity_api_list"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" >
+            android:name=".login.ui.LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".login.ui.LoginActivity"
-            android:exported="true">
 
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar"></activity>
     </application>
 
 </manifest>

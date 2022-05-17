@@ -1,5 +1,9 @@
 package com.example.mvvmarchitecture.login.viewmodela
 
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,8 +13,10 @@ import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
@@ -19,6 +25,10 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
     var arrTemp: List<Post> = mutableListOf()
     private val TAG = "LoginVM"
     val lvPost: MutableLiveData<Results<List<Post>>> = MutableLiveData()
+    val tags: MutableStateFlow<Results<List<String>>> =
+        MutableStateFlow(Results.Loading(isLoading = true))
+    val tagText: MutableStateFlow<Spannable> =
+        MutableStateFlow(SpannableString(""))
 
     fun getPost() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,14 +45,37 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
         }
     }
 
-    fun filter(str: String) {
+    fun filter(str: Spannable) {
         viewModelScope.launch {
-            arrTemp = if (str.isEmpty()) arrPost else arrPost.filter {
-                (it.body?.contains(str, ignoreCase = true) ?: false)
-                        || (it.title?.contains(str, ignoreCase = true) ?: false)
-                        || (it.id?.contains(str, ignoreCase = true) ?: false)
+            // "I know just how to #whisper, And I #know just how to cry,I know just where to find the answers"
+            var x = str.split(" ").find { it.firstOrNull().toString() == "#" }
+            var startPos = str.indexOf(x.toString())
+            var endPos = startPos + x.toString().length - 1
+            try {
+                val wordtoSpan: Spannable =
+                    SpannableString(str)
+                tagText.emit(
+                    wordtoSpan.apply {
+                        setSpan(
+                            ForegroundColorSpan(Color.BLUE),
+                            startPos,
+                            endPos,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            lvPost.postValue(Results.Data(arrTemp))
+
+        }
+    }
+
+    fun getTags() {
+        viewModelScope.launch(Dispatchers.IO) {
+            tags.emit(Results.Loading(true))
+            var list = (0..1000).map { "Item : $it" }.toMutableList()
+            tags.emit(Results.Data(list))
         }
     }
 
