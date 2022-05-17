@@ -13,7 +13,7 @@ import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +25,7 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
     var arrTemp: List<Post> = mutableListOf()
     private val TAG = "LoginVM"
     val lvPost: MutableLiveData<Results<List<Post>>> = MutableLiveData()
-    val tags: MutableStateFlow<Results<List<String>>> =
-        MutableStateFlow(Results.Loading(isLoading = true))
+
     val tagText: MutableStateFlow<Spannable> =
         MutableStateFlow(SpannableString(""))
 
@@ -47,37 +46,41 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
 
     fun filter(str: Spannable) {
         viewModelScope.launch {
-            // "I know just how to #whisper, And I #know just how to cry,I know just where to find the answers"
             var x = str.split(" ").find { it.firstOrNull().toString() == "#" }
             var startPos = str.indexOf(x.toString())
-            var endPos = startPos + x.toString().length - 1
-            try {
-                val wordtoSpan: Spannable =
-                    SpannableString(str)
-                tagText.emit(
-                    wordtoSpan.apply {
-                        setSpan(
-                            ForegroundColorSpan(Color.BLUE),
-                            startPos,
-                            endPos,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-                    }
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
+            var endPos = startPos + x.toString().length
+            if (startPos == -1 || endPos == -1) {
+                tagText.emit(SpannableString(str))
+            } else {
+                try {
+                    val wordSpan: Spannable = SpannableString(str)
+                    tagText.emit(
+                        wordSpan.apply {
+                            setSpan(
+                                ForegroundColorSpan(Color.BLUE),
+                                startPos,
+                                endPos,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                        }
+                    )
+                    x?.let { selectedTag.emit(it) }
+
+                } catch (e: Exception) {
+                    tagText.emit(SpannableString(str))
+                }
             }
-
         }
     }
 
-    fun getTags() {
-        viewModelScope.launch(Dispatchers.IO) {
-            tags.emit(Results.Loading(true))
-            var list = (0..1000).map { "Item : $it" }.toMutableList()
-            tags.emit(Results.Data(list))
-        }
-    }
-
-
+    var selectedTag: MutableStateFlow<String> = MutableStateFlow("")
+    val tags: StateFlow<Results<List<String>>> = selectedTag.mapLatest { selectedTag ->
+        println("Testing: $selectedTag")
+        var list = (0..1000).map { "Item_$it" }.toMutableList()
+        val x = if (selectedTag.length > 1) selectedTag.substring(
+            1,
+            selectedTag.length
+        ) else selectedTag
+        Results.Data(list.filter { it.contains(x, ignoreCase = true) })
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), Results.Loading(false))
 }

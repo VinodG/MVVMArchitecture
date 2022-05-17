@@ -18,6 +18,7 @@ import com.example.mvvmarchitecture.extension.toast
 import com.example.mvvmarchitecture.login.viewmodela.LoginVM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         setObservers()
         getPost()
-        vm.getTags()
         setListeners()
         lifecycleScope.launch {
             preference.getToken {
