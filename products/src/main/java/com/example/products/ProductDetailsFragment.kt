@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.example.orders.NavigationManager
 import com.example.orders.navigate
 import com.example.products.databinding.FragmentProductDetailsBinding
-import com.navigation.Product
 
 class ProductDetailsFragment : Fragment() {
 
@@ -30,7 +29,7 @@ class ProductDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnHome.setOnClickListener {
-            navigate(NavigationManager.ORDER, Product("1", "product"))
+            navigate(NavigationManager.ORDER, Product("1", "product from details11"))
         }
     }
 

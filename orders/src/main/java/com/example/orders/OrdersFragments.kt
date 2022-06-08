@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.orders.databinding.FragmentOrdersFragmentsBinding
 import com.navigation.Order
-import com.navigation.Product
 
 class OrdersFragments : Fragment() {
 
@@ -19,7 +18,7 @@ class OrdersFragments : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println(args<Product>())
+        println(args<ProductInOrder>())
     }
 
     override fun onCreateView(
