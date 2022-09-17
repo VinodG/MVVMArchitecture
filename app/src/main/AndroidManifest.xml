@@ -14,25 +14,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".list.ui.ApiListActivity"
+            android:name=".firebase.ui.DrugActivity"
             android:exported="true"
-            android:label="@string/title_activity_api_list"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" >
+            android:theme="@style/Theme.MVVMArchitecture"  >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".login.ui.LoginActivity"
+            android:name=".firebase.ui.PharmacyListActivity"
             android:exported="true">
 
         </activity>
         <activity
+            android:name=".list.ui.ApiListActivity"
+            android:exported="true"
+            android:label="@string/title_activity_api_list"
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar"></activity>
+        <activity
+            android:name=".login.ui.LoginActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar"></activity>
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" />
     </application>
 
 </manifest>

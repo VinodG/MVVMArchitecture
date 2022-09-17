@@ -4,6 +4,7 @@ plugins {
 //    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 
 }
 
@@ -99,6 +100,9 @@ dependencies {
 
     //hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
 //    test
