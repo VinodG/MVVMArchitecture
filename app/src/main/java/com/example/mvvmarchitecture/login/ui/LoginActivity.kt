@@ -1,6 +1,10 @@
 package com.example.mvvmarchitecture.login.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.toSpannable
@@ -60,13 +64,23 @@ class LoginActivity : AppCompatActivity() {
                 getPost()
             }
             rv.adapter = tagAdapter
-//            rv.adapter = postAdapter
             etSearch.addTextChangedListener {
                 if (it == null)
                     return@addTextChangedListener
                 vm.filter(it.toSpannable())
             }
         }
+    }
+
+    fun setSearch() {
+        val wordSpan: Spannable = SpannableString("vinod #item_AS asdfasd  asdf")
+        wordSpan.setSpan(
+            ForegroundColorSpan(Color.BLUE),
+            7,
+            12,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.etSearch.setText(wordSpan)
     }
 
     private fun setObservers() {

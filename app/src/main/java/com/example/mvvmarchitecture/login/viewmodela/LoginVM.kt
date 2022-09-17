@@ -13,6 +13,7 @@ import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,7 +65,7 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
                             )
                         }
                     )
-                    x?.let { selectedTag.emit(it) }
+                    x?.let { if (it != "#") selectedTag.emit(it) }
 
                 } catch (e: Exception) {
                     tagText.emit(SpannableString(str))
@@ -73,14 +74,24 @@ class LoginVM @Inject constructor(private var repo: CommonRepo) : BaseVM() {
         }
     }
 
-    var selectedTag: MutableStateFlow<String> = MutableStateFlow("")
-    val tags: StateFlow<Results<List<String>>> = selectedTag.mapLatest { selectedTag ->
-        println("Testing: $selectedTag")
+    private fun getApi(selectedTag: String) = flow {
+        emit(Results.Loading(true))
         var list = (0..1000).map { "Item_$it" }.toMutableList()
         val x = if (selectedTag.length > 1) selectedTag.substring(
             1,
             selectedTag.length
         ) else selectedTag
-        Results.Data(list.filter { it.contains(x, ignoreCase = true) })
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), Results.Loading(false))
+        delay(2000)
+        emit(Results.Data(list.filter { it.contains(x, ignoreCase = true) }))
+    }
+
+    var selectedTag: MutableStateFlow<String> = MutableStateFlow("")
+    val tags: StateFlow<Results<List<String>>> = selectedTag.flatMapConcat { selectedTag ->
+        println("Testing: $selectedTag")
+        getApi(selectedTag = selectedTag)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Results.Loading(true)
+    )
 }

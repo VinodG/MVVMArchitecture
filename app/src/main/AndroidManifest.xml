@@ -13,14 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
-
         <activity
-            android:name=".login.ui.LoginActivity"
+            android:name=".viewpager.MyViewpagerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.ui.LoginActivity"
+            android:exported="true">
 
         </activity>
     </application>
