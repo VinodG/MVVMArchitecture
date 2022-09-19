@@ -9,7 +9,6 @@ class PharmacyDataSource @Inject constructor(private var database: FirestoreData
     init {
         database.path = "pharmacy"
     }
-
     override fun add(data: Pharmacy) = database.add(data)
     override fun onChange(): Flow<ApiState<out List<Pharmacy>>> = database.onChange()
 
