@@ -1,6 +1,5 @@
 package com.example.mvvmarchitecture.login.viewmodela
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.mvvmarchitecture.base.BaseVM
