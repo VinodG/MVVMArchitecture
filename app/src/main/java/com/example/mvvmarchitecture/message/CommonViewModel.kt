@@ -34,7 +34,11 @@ class CommonViewModel @Inject constructor(val repo: CommonRepo) : ViewModel() {
 
     fun getContacts() {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.getContacts().collect { _contact.emit(it) }
+            repo.getContacts().collect {
+                _contact.emit(it)
+//                repo.addToBackend(it)
+            }
+            println("api call is ended")
         }
     }
 
@@ -44,7 +48,7 @@ class CommonViewModel @Inject constructor(val repo: CommonRepo) : ViewModel() {
                 repo.insertSmsIntoLocal().collect {
                     println("inserted sms: ${it.size}")
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -56,7 +60,7 @@ class CommonViewModel @Inject constructor(val repo: CommonRepo) : ViewModel() {
                 repo.insertContactIntoLocal().collect {
                     println("inserted contacts: ${it.size}")
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

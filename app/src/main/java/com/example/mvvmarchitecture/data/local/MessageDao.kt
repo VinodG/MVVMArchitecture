@@ -3,6 +3,7 @@ package com.example.mvvmarchitecture.data.local
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,7 @@ interface MessageDao {
     @Query("SELECT * FROM message WHERE id IN (:msgId)")
     fun loadAllByIds(msgId: IntArray): List<Message>
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insertAll(vararg msgs: Message)
 
     @Update
