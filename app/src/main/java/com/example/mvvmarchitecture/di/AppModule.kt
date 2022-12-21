@@ -3,6 +3,7 @@ package com.example.mvvmarchitecture.di
 import com.example.mvvmarchitecture.data.CommonRepo
 import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.remote.Api
+import com.example.mvvmarchitecture.data.remote.LocalApi
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
 import dagger.Provides
@@ -45,7 +46,16 @@ class AppModule {
             .create(Api::class.java)
 
     @Provides
-    fun provideRepo(api: Api): Repo = CommonRepo(api)
+    fun retrofitBuilderForLocal(client: OkHttpClient, factory: GsonConverterFactory): LocalApi =
+        Retrofit.Builder()
+            .baseUrl(NetworkUrl.LOCAL_BASE_URL)
+            .client(client)
+            .addConverterFactory(factory)
+            .build()
+            .create(LocalApi::class.java)
+
+    @Provides
+    fun provideRepo(api: Api,localApi: LocalApi): Repo = CommonRepo(api,localApi )
 
     @Provides
     fun providesDispatcherIO(): CoroutineDispatcher = Dispatchers.IO

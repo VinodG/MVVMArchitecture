@@ -100,6 +100,7 @@ dependencies {
 
     //hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
 //    test

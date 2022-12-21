@@ -2,16 +2,20 @@ package com.example.mvvmarchitecture.data
 
 import com.example.mvvmarchitecture.data.models.Post
 import com.example.mvvmarchitecture.data.remote.Api
+import com.example.mvvmarchitecture.data.remote.LocalApi
 import com.example.mvvmarchitecture.multilevel.Network
 import com.example.mvvmarchitecture.multilevel.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import java.lang.Exception
 import javax.inject.Inject
 
-class CommonRepo @Inject constructor(private var api: Api) : Repo {
+class CommonRepo @Inject constructor(private var api: Api, private val localApi: LocalApi) : Repo {
     override suspend fun getApi() = api.get()
 
     override fun getList() = flow<Network> {
@@ -46,6 +50,9 @@ class CommonRepo @Inject constructor(private var api: Api) : Repo {
 //        emit(Network.Error(Exception("network eroror")))
         println("done")
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getJson() = localApi.get()
+    suspend fun postImage(filePart: MultipartBody.Part,textPart: RequestBody) = localApi.postImage(filePart,textPart)
 
 }
 
