@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MVVMArchitectureTheme {
                 val navHostController = rememberNavController()
-                DeepLinkNavigation(navHostController)
+                AppNavigation(navHostController)
             }
         }
     }
@@ -71,11 +71,10 @@ sealed class Screen(val id: String) {
 
 
 @Composable
-fun DeepLinkNavigation(navController: NavHostController) {
+fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.Splash.id) {
         composable(Screen.Splash.id) {
             Button(
-                modifier = Modifier.fillMaxWidth(0.5f),
                 onClick = { navController.navigate(Screen.Login.id) }) {
                 Text(
                     "Splash -> Login"
@@ -83,8 +82,9 @@ fun DeepLinkNavigation(navController: NavHostController) {
             }
         }
         composable(Screen.Login.id) {
-            ScreenUi(buttonName = "Login -> Home") {
-                navController.navigate(Screen.Home.id)
+            Button(
+                onClick = { navController.navigate(Screen.Home.id) }) {
+                Text("Login -> Home")
             }
         }
         composable(Screen.Home.id) {
@@ -92,54 +92,20 @@ fun DeepLinkNavigation(navController: NavHostController) {
                 navController.navigate(Screen.Profile.id)
             }
             ) {
-                Text("Home->Profile")
+                Text("Home -> Profile")
             }
         }
-//        To trigger deeplink adb shell am start -W -a android.intent.action.VIEW -d "vidi://vinod/profile?token=324e324324"
-        val uri = "vidi://vinod/profile?token={id}"
-        composable(
-//            "profile?id={id}",
-            Screen.Profile.id,
-            deepLinks = listOf(navDeepLink {
-                uriPattern = uri
-            })
-        ) {
-            Profile()
-        }
-    }
-}
-
-@Composable
-fun Profile( viewModel: DeepVM = hiltViewModel()) {
-    Column {
-        Text(text = "received value : " + viewModel.vid)
-    }
-}
-
-@Composable
-fun ScreenUi(
-    title: String = "",
-    buttonName: String,
-    viewModel: AnimationVM = hiltViewModel(),
-    function: () -> Unit
-) {
-
-    ObserverEvents(LocalLifecycleOwner.current) { source, event ->
-        if (event == Lifecycle.Event.ON_RESUME) {
-            viewModel.isInitVisible.value = true
-        }
-    }
-    EnterAnimation(
-        visible = viewModel.isVisible.value.not(),
-        initVisible = viewModel.isInitVisible.value
-    ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(color = Color.Red)
-        ) {
-            Button(onClick = function) {
-                Text(buttonName)
+        composable(Screen.Profile.id) {
+            Button(onClick = {
+                navController.navigate(Screen.Login.id) {
+                    launchSingleTop = true
+                    popUpTo(Screen.Login.id) {
+                        inclusive = false
+                    }
+                }
+            }
+            ) {
+                Text("Profile -> Login")
             }
         }
     }
@@ -160,36 +126,4 @@ fun ObserverEvents(
             lifeCycleOwner.lifecycle.removeObserver(observer)
         }
     }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun EnterAnimation(
-    visible: Boolean = true,
-    initVisible: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInHorizontally(initialOffsetX = {
-            it
-        }, animationSpec = tween(500)),
-        exit = slideOutHorizontally(targetOffsetX = {
-            it
-        }, animationSpec = tween(500)),
-        content = content,
-        initiallyVisible = initVisible
-    )
-}
-
-
-@HiltViewModel
-class AnimationVM @Inject constructor() : ViewModel() {
-    val isVisible = mutableStateOf(false)
-    val isInitVisible = mutableStateOf(false)
-}
-
-@HiltViewModel
-class DeepVM @Inject constructor(savedStateHandle: SavedStateHandle) : ViewModel() {
-    val vid: String = savedStateHandle.get<String>("id").orEmpty()
 }
