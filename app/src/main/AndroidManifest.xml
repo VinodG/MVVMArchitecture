@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     package="com.example.mvvmarchitecture">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,28 +15,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".multilevel.DropdownAndSortActivity"
+            android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_dropdown_and_sort"
-            android:theme="@style/Theme.MVVMArchitecture">
+            android:launchMode="singleTask"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MVVMArchitecture.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="vinod"
+                    android:pathPrefix="/profile"
+                    android:scheme="vidi" />
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".list.ui.ApiListActivity"
-            android:exported="true"
-            android:label="@string/title_activity_api_list"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar">
 
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MVVMArchitecture.NoActionBar" />
     </application>
 
 </manifest>

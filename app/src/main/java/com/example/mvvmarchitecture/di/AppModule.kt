@@ -1,7 +1,5 @@
 package com.example.mvvmarchitecture.di
 
-import com.example.mvvmarchitecture.data.CommonRepo
-import com.example.mvvmarchitecture.data.Repo
 import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.NetworkUrl
 import dagger.Module
@@ -43,9 +41,6 @@ class AppModule {
             .addConverterFactory(factory)
             .build()
             .create(Api::class.java)
-
-    @Provides
-    fun provideRepo(api: Api): Repo = CommonRepo(api)
 
     @Provides
     fun providesDispatcherIO(): CoroutineDispatcher = Dispatchers.IO
