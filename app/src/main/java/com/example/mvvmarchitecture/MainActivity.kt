@@ -101,7 +101,7 @@ fun DeepLinkNavigation(navController: NavHostController) {
 //            "profile?id={id}",
             Screen.Profile.id,
             deepLinks = listOf(navDeepLink {
-                uriPattern = uri
+                uriPattern = "vidi://vinod/profile?token={id}"
             })
         ) {
             Profile()
