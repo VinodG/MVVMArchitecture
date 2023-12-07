@@ -18,6 +18,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import java.io.File
 import javax.inject.Inject
 
@@ -38,11 +39,22 @@ class PolymorphismViewModel @Inject constructor(
 
     fun getList() {
         viewModelScope.launch(Dispatchers.IO) {
+            repo.getResponseBody().collectLatest { x ->
+                when (x) {
+                    is MyResult.Success<ResponseBody?> -> {
+                        Log.e(TAG, "getList: success "+x.data?.string()+" end")
+                        state.emit(listOf())
+                    }
+
+                    is MyResult.Error -> Log.e(TAG, "getList: error ")
+                    else -> Log.e(TAG, "getList: loading ")
+                }
+            }
 //            repo.getX().collectLatest { x ->
 //                when (x) {
-//                    is MyResult.Success<List<Post>> -> {
+//                    is MyResult.Success<List<Post>?> -> {
 //                        Log.e(TAG, "getList: success ")
-//                        state.emit(x.data)
+//                        state.emit(x.data.orEmpty())
 //                    }
 //
 //                    is MyResult.Error -> Log.e(TAG, "getList: error ")

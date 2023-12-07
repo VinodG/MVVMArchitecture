@@ -26,7 +26,9 @@ interface LocalApi {
     @GET("poly")
     suspend fun getPolyObject(): Response<Data>
     @GET("posts")
-    suspend fun getPosts(): Response<List<Post>>
+    suspend fun getPosts(): Response<List<Post>?>
+    @GET("posts")
+    suspend fun getResponseList(): Response<ResponseBody?>
 }
 
 

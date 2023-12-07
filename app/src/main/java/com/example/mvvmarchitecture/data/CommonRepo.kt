@@ -5,38 +5,34 @@ import com.example.mvvmarchitecture.data.remote.Api
 import com.example.mvvmarchitecture.data.remote.LocalApi
 import com.example.mvvmarchitecture.data.remote.MyResult
 import com.example.mvvmarchitecture.data.remote.asResult
-import com.example.mvvmarchitecture.data.remote.safeNetworkCall
+import com.example.mvvmarchitecture.data.remote.safeApi
 import com.example.mvvmarchitecture.multilevel.Network
 import com.example.mvvmarchitecture.multilevel.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import java.lang.Exception
 import javax.inject.Inject
 
 class CommonRepo @Inject constructor(private var api: Api, private val localApi: LocalApi) : Repo {
     override suspend fun getApi() = api.get()
-    override suspend fun getLocalPosts(): MyResult<List<Post>> {
-        return safeNetworkCall { localApi.getPosts() }
+    override suspend fun getLocalPosts(): MyResult<List<Post>?> {
+        return safeApi { localApi.getPosts() }
     }
 
-    suspend fun getX(): Flow<MyResult<List<Post>>> = getLocalPosts().asResult().flowOn(Dispatchers.IO)
+    suspend fun getX(): Flow<MyResult<List<Post>?>> =
+        getLocalPosts().asResult().flowOn(Dispatchers.IO)
 
     override fun getList() = flow<Network> {
         var list = mutableListOf<Product>()
         var i = 1
         emit(Network.Load)
         delay(2000)
-        repeat(2) { product ->
+        repeat(2) {
             repeat(2) { category ->
                 repeat(2) { subCategory ->
                     repeat(2) { subSubCategory ->
@@ -59,10 +55,13 @@ class CommonRepo @Inject constructor(private var api: Api, private val localApi:
         }
         println("loading")
         emit(Network.Data(list))
-//        emit(Network.Data(listOf()))
-//        emit(Network.Error(Exception("network eroror")))
-        println("done")
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getResponseBody(): Flow<MyResult<ResponseBody?>> {
+        val x = safeApi { localApi.getResponseList() }
+        val y = x.asResult()
+        return y.flowOn(Dispatchers.IO)
+    }
 
     suspend fun getJson() = localApi.get()
     suspend fun postImage(filePart: MultipartBody.Part, textPart: RequestBody) =
@@ -78,14 +77,19 @@ class CommonRepo2 @Inject constructor(private var api: Api) : Repo {
         return MyResult.Success(null)
     }
 
-    override fun getList(): kotlinx.coroutines.flow.Flow<Network> {
+    override fun getList(): Flow<Network> {
         return flow<Network> { emit(Network.Data(listOf())) }
+    }
+
+    override suspend fun getResponseBody(): Flow<MyResult<ResponseBody?>>{
+        TODO("Not yet implemented")
     }
 }
 
 interface Repo {
     suspend fun getApi(): List<Post>
     suspend fun getLocalPosts(): MyResult<List<Post>?>
-    fun getList(): kotlinx.coroutines.flow.Flow<Network>
+    fun getList(): Flow<Network>
+    suspend fun getResponseBody(): Flow<MyResult<ResponseBody?>>
 }
 

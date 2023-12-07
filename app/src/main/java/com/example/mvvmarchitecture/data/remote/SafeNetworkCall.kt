@@ -1,5 +1,6 @@
 package com.example.mvvmarchitecture.data.remote
 
+import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -8,42 +9,49 @@ import kotlinx.coroutines.flow.onStart
 import retrofit2.Response
 import java.io.EOFException
 
-typealias SafeApiInvoke<T> = suspend () -> Response<T>
-
-/**
- * Common gateway for all network API call.
- */
-suspend inline fun <reified T : Any> safeNetworkCall(
-    networkApiCall: SafeApiInvoke<T>
+inline fun <reified T> safeApi(
+    networkApiCall: () -> Response<T>
 ): MyResult<T> {
     return try {
         val response = networkApiCall()
-        if (response.isSuccessful) {
-            response.body()?.let { return@let MyResult.Success(it) }
-                ?: run { tryToGetNoContentResult() }
-        } else {
-            return parseNetworkError(response)
+        val body = response.body()
+        val isSuccess = response.isSuccessful
+        when {
+            isSuccess && body != null -> {
+                Log.e("safeApi", "isSuccess: true and body not null ${body.toString()}")
+                MyResult.Success(body)
+            }
+            isSuccess -> {
+                Log.e("safeApi", "isSuccess: true ")
+                tryToGetNoContentResult()
+            }
+            else -> {
+                Log.e("safeApi", "parseNetworkError: else ")
+                //for error code 502..etc
+                parseNetworkError(response)
+            }
         }
     } catch (ex: EOFException) {
-        // Retrofit throws this exception when get 200 with no body.
-        // (Weired response from our API)
-        return tryToGetNoContentResult(ex)
+        Log.e("safeApi", "EOF tryToGetNoContentResult: ")
+        //if response type is not Response<Response> and returned response is null (or) without response body
+        tryToGetNoContentResult()
     } catch (ex: Exception) {
-        return MyResult.Error(ex)
+        Log.e("safeApi", "exception: ")
+        //for wrong response -> illegalStatementException
+        MyResult.Error(ex)
     }
 }
 
-inline fun <reified T> tryToGetNoContentResult(ex: Exception? = null): MyResult<T> {
-    Gson().fromJson("{}", T::class.java)?.let { // try if <T> is a object
-        return MyResult.Success(it)
-    } ?: Gson().fromJson("[]", T::class.java)?.let { // try if <T> is an array
-        return MyResult.Success(it, withNoContent = true)
-    } ?: return MyResult.Error(ex)
+inline fun <reified T> tryToGetNoContentResult(): MyResult<T> {
+    return when (T::class.java) {
+        List::class.java ->
+            MyResult.Success(Gson().fromJson("[]", T::class.java), withNoContent = true)
+
+        else ->
+            MyResult.Success(Gson().fromJson("{}", T::class.java), withNoContent = true)
+    }
 }
 
-/**
- * Common function to parse different types of error.
- */
 fun <T> parseNetworkError(response: Response<T>): MyResult.Error {
     val errorBody = response.errorBody()?.string()
     return MyResult.Error(errorBody = errorBody)
