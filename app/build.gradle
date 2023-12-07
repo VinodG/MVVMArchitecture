@@ -4,7 +4,7 @@ plugins {
 //    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -111,7 +111,8 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 //Mocktio
 //    testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:4.2.0'

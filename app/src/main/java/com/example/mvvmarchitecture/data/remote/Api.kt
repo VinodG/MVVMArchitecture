@@ -5,7 +5,6 @@ import okhttp3.ResponseBody
 import retrofit2.http.GET
 
 interface Api {
-
     @GET(NetworkUrl.URL)
     suspend fun get(): List<Post>
 }

@@ -15,7 +15,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.MVVMArchitecture">
         <activity
-            android:name=".multipart_image.UploadImage"
+            android:name=".multipart_image.PolymorphismActivity"
             android:exported="true"
             android:label="@string/title_activity_upload_image"
             android:theme="@style/Theme.MVVMArchitecture">

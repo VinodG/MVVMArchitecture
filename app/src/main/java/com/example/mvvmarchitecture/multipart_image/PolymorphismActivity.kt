@@ -9,41 +9,30 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.mvvmarchitecture.multipart_image.ui.theme.MVVMArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
-class UploadImage : ComponentActivity() {
+class PolymorphismActivity : ComponentActivity() {
 
-    val vm: UploadImageViewModel by viewModels()
+    val vm: PolymorphismViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vm.uploadImage()
         setContent {
             MVVMArchitectureTheme {
                 // A surface container using the 'background' color from the theme
+                val x = vm.state.collectAsState()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting2("Android")
+                    Text("Android "+x.value.toString())
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting2(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview2() {
-    MVVMArchitectureTheme {
-        Greeting2("Android")
-    }
 }
